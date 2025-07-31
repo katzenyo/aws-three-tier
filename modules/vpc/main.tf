@@ -33,5 +33,27 @@ resource "aws_route_table" "public" {
 
 resource "aws_route_table_association" "public_route" {
   route_table_id = aws_route_table.public.id
-  gateway_id = aws_internet_gateway.gateway1.id
+  subnet_id = aws_subnet.public.id
+}
+
+resource "aws_security_group" "public_sg" {
+  name = "public-sg"
+  description = "Enables public web ingress (HTTPS)"
+  vpc_id = aws_vpc.primary.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "public_ingress_rule" {
+  security_group_id = aws_security_group.public_sg.id
+  ip_protocol = "tcp"
+  from_port = 443
+  to_port = 443
+  cidr_ipv4 = "0.0.0.0/0"
+}
+
+resource "aws_vpc_security_group_egress_rule" "public_egress_rule" {
+  ip_protocol = "-1" # Specifying all protocols - just in case
+  security_group_id = aws_security_group.public_sg.id
+  cidr_ipv4 = "0.0.0.0/0"
+  from_port = 443
+  to_port = 443
 }
