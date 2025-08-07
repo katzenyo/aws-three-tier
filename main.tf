@@ -8,10 +8,21 @@ module "vpc" {
   region = var.region
 }
 
-module "EC2" {
+module "ec2" {
   source = "./modules/ec2"
   region = var.region
   instance_type = var.instance_type
-  vpc_id = module.vpc_id
+  vpc_id = module.vpc.vpc_id
   ami_id = var.ami_id
+}
+
+module "rds" {
+  source = "./modules/rds"
+  vpc_id = module.vpc.vpc_id
+  db_password = var.db_password
+  subnet_private_id = module.vpc.subnet_private_id
+}
+
+module "alb" {
+  source = "./modules/alb"
 }

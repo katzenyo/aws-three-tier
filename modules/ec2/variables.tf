@@ -14,6 +14,6 @@ variable "instance_type" {
 }
 
 variable "vpc_id" {
-    description = "VPC id"
+  description = "VPC id"
   type = string
 }
