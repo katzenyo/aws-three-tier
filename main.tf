@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = ">=6.7.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.region
 }
@@ -25,4 +34,5 @@ module "rds" {
 
 module "alb" {
   source = "./modules/alb"
+  vpc_id = module.vpc.vpc_id
 }
