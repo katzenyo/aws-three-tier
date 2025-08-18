@@ -3,11 +3,10 @@ resource "aws_db_instance" "database" {
   allocated_storage = 10
   db_name = "development_plan_db"
   engine = "postgres"
-  engine_version = "8.0"
-  username = "admin"
+  username = "devplan_admin"
   password = var.db_password
-  db_subnet_group_name = aws_db
   vpc_security_group_ids = [ aws_security_group.db_security_group.id ]
+  db_subnet_group_name = aws_db_subnet_group.db_subnets.name
 }
 
 ### Security groups
@@ -23,7 +22,7 @@ resource "aws_vpc_security_group_ingress_rule" "public_ingress_rule" {
   ip_protocol = "tcp"
   from_port = 5432
   to_port = 5432
-  cidr_ipv4 = "10.20.64.0/18"
+  cidr_ipv4 = "0.0.0.0/0"
 }
 
 resource "aws_vpc_security_group_egress_rule" "public_egress_rule" {
@@ -35,5 +34,5 @@ resource "aws_vpc_security_group_egress_rule" "public_egress_rule" {
 ### Subnet groups
 
 resource "aws_db_subnet_group" "db_subnets" {
-  subnet_ids = [ var.subnet_private_id ]
+  subnet_ids = [ var.subnet_private_id_az1, var.subnet_private_id_az2 ]
 }

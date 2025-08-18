@@ -8,11 +8,6 @@ variable "region" {
   type = string
 }
 
-variable "availability_zone" {
-  description = "az-a"
-  type = string
-}
-
 variable "public_cidr" {
   type = string
 }
@@ -22,5 +17,13 @@ variable "private_apps_cidr" {
 }
 
 variable "private_db_cidr" {
+  type = string
+}
+
+variable "public_subnet_cidr_az2" {
+  type = string
+}
+
+variable "private_db_cidr_az2" {
   type = string
 }

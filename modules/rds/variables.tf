@@ -9,7 +9,12 @@ variable "vpc_id" {
   type = string
 }
 
-variable "subnet_private_id" {
-  description = "Private subnet ID"
+variable "subnet_private_id_az1" {
+  description = "Private subnet A ID"
+  type = string
+}
+
+variable "subnet_private_id_az2" {
+  description = "Private subnet B ID"
   type = string
 }

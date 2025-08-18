@@ -28,8 +28,8 @@ resource "aws_vpc_security_group_egress_rule" "sb_alb_web_allow_all_ipv4" {
   security_group_id = aws_security_group.sg_alb_web.id
   ip_protocol = "-1"
   cidr_ipv4 = "0.0.0.0/0"
-  from_port = 0
-  to_port = 0
+  # from_port = 0
+  # to_port = 0
 
   tags = {
     Name = "dev-plan-sg-alb-web-egress"
@@ -62,8 +62,8 @@ resource "aws_vpc_security_group_ingress_rule" "sg_app_allow_tcp_ipv4" {
 resource "aws_vpc_security_group_egress_rule" "sg_app_allow_all_outbound" {
   security_group_id = aws_security_group.sg_app.id
   ip_protocol = "-1"
-  from_port = 0
-  to_port = 0
+  # from_port = 0
+  # to_port = 0
   cidr_ipv4 = "0.0.0.0/0"
 
   tags = {
@@ -95,8 +95,8 @@ resource "aws_vpc_security_group_ingress_rule" "psql-from-app" {
 resource "aws_vpc_security_group_egress_rule" "psql-allow-all" {
   security_group_id = aws_security_group.sg_db.id
   ip_protocol = "-1"
-  to_port = 0
-  from_port = 0
+  # to_port = 0
+  # from_port = 0
   cidr_ipv4 = "0.0.0.0/0"
 
   tags = {
