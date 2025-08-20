@@ -71,6 +71,10 @@ resource "aws_route_table_association" "public_assoc_b" {
 resource "aws_eip" "igw_eip" {
   depends_on = [ aws_internet_gateway.igw1 ] # In case gateways must exist first
   domain = "vpc"
+  tags = {
+    Name = "dev-plan-nat-eip"
+    Purpose = "dev plan"
+  }
 }
 
 resource "aws_internet_gateway" "igw1" {
@@ -104,7 +108,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "dev-plan-route-table"
+    Name = "dev-plan-route-table-public"
     Purpose = "dev plan"
   }
 }
@@ -112,4 +116,26 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "public_route" {
   route_table_id = aws_route_table.public.id
   subnet_id = aws_subnet.public.id
+}
+
+
+# allows app subnet to NAT
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.primary.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway_1.id
+  }
+
+  tags = {
+    Name = "dev-plan-route-table-private"
+    Purpose = "dev plan"
+  }
+}
+
+# Connects the private app subnet to the private route table
+resource "aws_route_table_association" "private_app_a" {
+  route_table_id = aws_route_table.private.id
+  subnet_id = aws_subnet.private-app.id
 }

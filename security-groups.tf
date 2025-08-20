@@ -45,10 +45,11 @@ resource "aws_security_group" "sg_app" {
   vpc_id = module.vpc.vpc_id
 }
 
-resource "aws_vpc_security_group_ingress_rule" "sg_app_allow_tcp_ipv4" {
+resource "aws_vpc_security_group_ingress_rule" "sg_app_allow_http_ipv4" {
   security_group_id = aws_security_group.sg_app.id
+  referenced_security_group_id = aws_security_group.sg_alb_web.id
   ip_protocol = "tcp"
-  cidr_ipv4 = var.private_apps_cidr
+  # cidr_ipv4 = var.private_apps_cidr
   from_port = 80
   to_port = 80
 

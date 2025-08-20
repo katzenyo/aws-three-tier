@@ -44,9 +44,19 @@ module "rds" {
   db_password = var.db_password
   subnet_private_id_az1 = module.vpc.subnet_db_private_id_az1
   subnet_private_id_az2 = module.vpc.subnet_db_private_id_az2
+  security_group_app_id = aws_security_group.sg_app.id
 }
 
 # module "alb" {
 #   source = "./modules/alb"
 #   vpc_id = module.vpc.vpc_id
 # }
+
+module "asg" {
+  source = "./modules/asg"
+  subnet_private_app_id = module.vpc.subnet_private_app_id
+  elb_app_target_group_arn = aws_lb_target_group.app_target_group.arn
+  aws_ssm_ami_value = module.ec2.aws_ssm_ami_value
+  iam_instance_profile_name = module.ec2.iam_instance_profile_name
+  sg_app_id = aws_security_group.sg_app.id
+}

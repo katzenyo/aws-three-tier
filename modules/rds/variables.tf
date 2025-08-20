@@ -18,3 +18,8 @@ variable "subnet_private_id_az2" {
   description = "Private subnet B ID"
   type = string
 }
+
+variable "security_group_app_id" {
+  description = "ID of the application security group"
+  type = string
+}

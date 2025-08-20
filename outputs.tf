@@ -22,3 +22,8 @@ output "private_db_subnet_id_b" {
   value = module.vpc.subnet_db_private_id_az2
   description = "Private DB subnet ID (B)"
 }
+
+output "db_endpoint" {
+  value = module.rds.database_endpoint
+  description = "Postgres endpoint"
+}
