@@ -56,3 +56,58 @@ resource "aws_db_subnet_group" "db_subnets" {
     Purpose = "dev plan"
   }
 }
+
+### SSM parameters
+
+resource "aws_ssm_parameter" "postgres_endpoint" {
+  name = "/dev-plan/postgres/endpoint"
+  type = "String"
+  value = aws_db_instance.database.address
+}
+
+resource "aws_ssm_parameter" "postgres_username" {
+  name = "/dev-plan/postgres/username"
+  type = "String"
+  value = aws_db_instance.database.username
+}
+
+resource "aws_ssm_parameter" "postgres_password" {
+  name = "/dev-plan/postgres/password"
+  type = "SecureString"
+  value = var.db_password
+}
+
+### Security Groups
+
+# Database security group: App > DB connection
+# resource "aws_security_group" "sg_db" {
+#   name = "dev-plan-sg-db"
+#   description = "Allow Postgres from app security group"
+#   vpc_id = module.vpc.vpc_id
+# }
+
+# resource "aws_vpc_security_group_ingress_rule" "psql-from-app" {
+#   security_group_id = aws_security_group.sg_db.id
+#   referenced_security_group_id = var.security_group_app_id
+#   ip_protocol = "tcp"
+#   from_port = 5432
+#   to_port = 5432
+  
+#   tags = {
+#     Name = "psql-sg-ingress"
+#     Purpose = "dev plan"
+#   }
+# }
+
+# resource "aws_vpc_security_group_egress_rule" "psql-allow-all" {
+#   security_group_id = aws_security_group.sg_db.id
+#   ip_protocol = "-1"
+#   # to_port = 0
+#   # from_port = 0
+#   cidr_ipv4 = "0.0.0.0/0"
+
+#   tags = {
+#     Name = "psql-sg-egress"
+#     Purpose = "dev plan"
+#   }
+# }

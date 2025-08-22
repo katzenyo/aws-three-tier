@@ -1,11 +1,15 @@
+data "aws_ssm_parameter" "al2023_gp3_ami" {
+  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
+}
+
 ### Launch Template Configuration
 resource "aws_launch_template" "app" {
   name_prefix = "dev-plan-"
-  image_id = var.aws_ssm_ami_value
+  image_id = data.aws_ssm_parameter.al2023_gp3_ami.value
   instance_type = "t3.micro"
 
   iam_instance_profile {
-    name = var.iam_instance_profile_name
+    name = aws_iam_instance_profile.ec2_profile.name
   }
 
   vpc_security_group_ids = [ var.sg_app_id ]
@@ -69,4 +73,37 @@ resource "aws_autoscaling_policy" "cpu_tracking_50" {
       }
     }
   
+}
+
+### IAM configuration
+
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "Service"
+      identifiers = [ "ec2.amazonaws.com" ]
+    }
+    actions = [ "sts:AssumeRole" ]
+  }
+}
+
+resource "aws_iam_role" "ec2_role" {
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+  name = "dev-plan-ec2-ssm-role"
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_core" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role = aws_iam_role.ec2_role.name
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "dev-plan-ec2-instance-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_readonly" {
+  role = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
 }

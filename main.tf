@@ -29,34 +29,26 @@ module "vpc" {
   private_db_cidr_az2 = var.private_db_cidr_az2
 }
 
-module "ec2" {
-  source = "./modules/ec2"
-  region = var.region
-  instance_type = var.instance_type
-  vpc_id = module.vpc.vpc_id
-  ami_id = var.ami_id
-  subnet_public_id = module.vpc.subnet_public_id
-}
-
 module "rds" {
   source = "./modules/rds"
   vpc_id = module.vpc.vpc_id
   db_password = var.db_password
   subnet_private_id_az1 = module.vpc.subnet_db_private_id_az1
   subnet_private_id_az2 = module.vpc.subnet_db_private_id_az2
-  security_group_app_id = aws_security_group.sg_app.id
+  security_group_app_id = module.alb.app_sg_id
 }
 
-# module "alb" {
-#   source = "./modules/alb"
-#   vpc_id = module.vpc.vpc_id
-# }
+module "alb" {
+  source = "./modules/alb"
+  vpc_id = module.vpc.vpc_id
+  public_subnet_a_id = module.vpc.subnet_public_id
+  public_subnet_b_id = module.vpc.subnet_public_b_id
+}
 
 module "asg" {
   source = "./modules/asg"
   subnet_private_app_id = module.vpc.subnet_private_app_id
-  elb_app_target_group_arn = aws_lb_target_group.app_target_group.arn
-  aws_ssm_ami_value = module.ec2.aws_ssm_ami_value
-  iam_instance_profile_name = module.ec2.iam_instance_profile_name
-  sg_app_id = aws_security_group.sg_app.id
+  elb_app_target_group_arn = module.alb.target_group_arn
+  sg_app_id = module.alb.app_sg_id
+  depends_on = [ module.alb ]
 }
