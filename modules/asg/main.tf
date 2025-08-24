@@ -59,7 +59,7 @@ resource "aws_autoscaling_group" "app_asg" {
   }
 }
 
-# Initiates a scaling operation when CPU exceeds 50% utilization
+# Only initiates a scaling operation when CPU exceeds 50% utilization. Otherwise, only 1 instance is deployed
 resource "aws_autoscaling_policy" "cpu_tracking_50" {
     name = "cpu-50"
     autoscaling_group_name = aws_autoscaling_group.app_asg.name
