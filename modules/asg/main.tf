@@ -75,7 +75,7 @@ resource "aws_autoscaling_policy" "cpu_tracking_50" {
   
 }
 
-### IAM configuration
+### IAM instance profile configuration
 
 data "aws_iam_policy_document" "ec2_assume_role" {
   statement {
