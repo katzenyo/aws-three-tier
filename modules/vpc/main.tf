@@ -61,11 +61,6 @@ resource "aws_subnet" "public_b" {
   }
 }
 
-resource "aws_route_table_association" "public_assoc_b" {
-  route_table_id = aws_route_table.public.id
-  subnet_id = aws_subnet.public_b.id
-}
-
 ### NAT and IGW's
 
 resource "aws_eip" "igw_eip" {
@@ -116,6 +111,11 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "public_route" {
   route_table_id = aws_route_table.public.id
   subnet_id = aws_subnet.public.id
+}
+
+resource "aws_route_table_association" "public_assoc_b" {
+  route_table_id = aws_route_table.public.id
+  subnet_id = aws_subnet.public_b.id
 }
 
 
